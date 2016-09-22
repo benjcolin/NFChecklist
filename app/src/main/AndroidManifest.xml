@@ -25,7 +25,9 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-        <activity android:name=".WriteTagActivity"></activity>
+        <activity android:name=".WriteTagActivity"
+            android:label="@string/write_tag">
+        </activity>
 
     </application>
 
