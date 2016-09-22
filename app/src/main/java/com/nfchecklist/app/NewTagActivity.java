@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 public class NewTagActivity extends AppCompatActivity {
+    public final static String EXTRA_MESSAGE = "com.nfchecklist.app.MESSAGE";
     private Tag mytag;
     private Context ctx;
     private EditText tagName;
@@ -38,10 +39,14 @@ public class NewTagActivity extends AppCompatActivity {
         tagName = (EditText) findViewById(R.id.name);
         mAdapter = NfcAdapter.getDefaultAdapter(this);
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        
+
     }
 
     public void writeTag(View view){
+        Intent intent = new Intent(this, WriteTagActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, tagName.getText());
+        startActivity(intent);
+
         try {
             if(mytag==null){
                 Toast.makeText(ctx, ctx.getString(R.string.error_detected), Toast.LENGTH_SHORT ).show();
@@ -59,11 +64,25 @@ public class NewTagActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        //Enable forground dispatching to get the tags
+        mAdapter.enableForegroundDispatch(this, mPendingIntent, null, null); //ended up setting mFilters and mTechLists to null
+    }
+
+    @Override
     protected void onNewIntent(Intent intent){
         if(NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
             mytag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             Toast.makeText(this, this.getString(R.string.ok_detection) + mytag.toString(), Toast.LENGTH_LONG ).show();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //You need to disable forgroundDispatching here
+        mAdapter.disableForegroundDispatch(this);
     }
 
     private NdefRecord createRecord(String text) throws UnsupportedEncodingException {
