@@ -2,21 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <group android:checkableBehavior="single" >
-
-        <item
-        android:id="@+id/alltags"
-        android:icon="@drawable/ic_menu_tag"
-        android:title="All Tags" />
-
-    </group>
-
-
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/checkliste1"
-            android:icon="@drawable/ic_menu_checklist"
-            android:title="Checklist" />
+            android:id="@+id/alltags"
+            android:icon="@drawable/ic_menu_tag"
+            android:title="All Tags" />
     </group>
+
+    <item android:title="Checklisten">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/checkliste1"
+                    android:icon="@drawable/ic_menu_checklist"
+                    android:title="Checklist" />
+            </group>
+        </menu>
+    </item>
 
 </menu>

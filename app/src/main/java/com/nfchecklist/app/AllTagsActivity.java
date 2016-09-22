@@ -1,5 +1,6 @@
 package com.nfchecklist.app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class AllTagsActivity extends AppCompatActivity
@@ -39,7 +41,15 @@ public class AllTagsActivity extends AppCompatActivity
 
     public void newTag(View view){
         Intent intent = new Intent(this, NewTagActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, NewTagActivity.REQUEST_NEW_TAG);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == NewTagActivity.REQUEST_NEW_TAG && resultCode == Activity.RESULT_OK){
+            TextView test = (TextView) findViewById(R.id.text); //Write new Tag into the Database...
+            test.setText(data.getStringExtra(NewTagActivity.TAG_NAME));
+        }
     }
 
     @Override
