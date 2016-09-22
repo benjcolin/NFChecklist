@@ -11,4 +11,7 @@
     <string name="error_writing">error writing</string>
     <string name="ok_detection">ok detection</string>
     <string name="write_tag">Write Tag</string>
+    <string name="new_tag">New Tag</string>
+    <string name="tag_name">Tag name:</string>
+    <string name="name_newtag">Name</string>
 </resources>
