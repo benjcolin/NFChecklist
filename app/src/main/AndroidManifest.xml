@@ -21,7 +21,7 @@
         </activity>
         <activity
             android:name=".NewTagActivity"
-            android:label="@string/app_name"
+            android:label="@string/newTagActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
