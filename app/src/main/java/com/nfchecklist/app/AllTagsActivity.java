@@ -2,9 +2,11 @@ package com.nfchecklist.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,11 +16,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class AllTagsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private ListView listView;
+    private DBHelper dbHelper;
+    private SimpleCursorAdapter cursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,32 @@ public class AllTagsActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        dbHelper = new DBHelper(this);
+
+        final Cursor cursor = dbHelper.getAllTags();
+        String [] columns = new String[]{
+                DBHelper.TAG_COLUMN_NAME,
+                DBHelper.TAG_COLUMN_ID
+        };
+        int [] widgets = new int[]{
+                R.id.tagName,
+                R.id.tagId
+        };
+
+        cursorAdapter = new SimpleCursorAdapter(this, R.layout.tag,
+                cursor, columns, widgets, 0);
+        listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(cursorAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Cursor itemCursor = (Cursor) AllTagsActivity.this.listView.getItemAtPosition(position);
+                dbHelper.deleteTag(itemCursor.getInt(itemCursor.getColumnIndex(DBHelper.TAG_COLUMN_ID)));
+                final Cursor cursor = dbHelper.getAllTags();
+                cursorAdapter.changeCursor(cursor);
+            }
+        });
     }
 
     public void newTag(View view){
@@ -47,8 +80,9 @@ public class AllTagsActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NewTagActivity.REQUEST_NEW_TAG && resultCode == Activity.RESULT_OK){
-            TextView test = (TextView) findViewById(R.id.text); //Write new Tag into the Database...
-            test.setText(data.getStringExtra(NewTagActivity.TAG_NAME));
+            dbHelper.insertTag(data.getStringExtra(NewTagActivity.TAG_NAME));
+            final Cursor cursor = dbHelper.getAllTags();
+            cursorAdapter.changeCursor(cursor);
         }
     }
 

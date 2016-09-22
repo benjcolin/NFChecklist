@@ -12,9 +12,10 @@
     tools:context="com.nfchecklist.app.AllTagsActivity"
     tools:showIn="@layout/app_bar_all_tags">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/text"/>
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
+
 </RelativeLayout>
