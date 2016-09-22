@@ -23,6 +23,9 @@
             android:name=".NewTagActivity"
             android:label="@string/newTagActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <activity android:name=".WriteTagActivity"></activity>
+
     </application>
 
 </manifest>
