@@ -114,4 +114,5 @@ public class NewTagActivity extends AppCompatActivity {
         ndef.writeNdefMessage(message);
         ndef.close();
     }
+
 }
