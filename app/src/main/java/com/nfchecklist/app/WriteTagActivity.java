@@ -13,6 +13,7 @@ public class WriteTagActivity extends AppCompatActivity {
         setContentView(R.layout.activity_write_tag);
         TextView tagName = (TextView) findViewById(R.id.tagName);
         Intent intent = getIntent();
-        tagName.setText(intent.getStringExtra(NewTagActivity.EXTRA_MESSAGE));
+        String message = intent.getStringExtra(NewTagActivity.EXTRA_MESSAGE);
+        tagName.setText(message);
     }
 }

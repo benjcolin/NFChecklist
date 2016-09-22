@@ -44,7 +44,7 @@ public class NewTagActivity extends AppCompatActivity {
 
     public void writeTag(View view){
         Intent intent = new Intent(this, WriteTagActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, tagName.getText());
+        intent.putExtra(EXTRA_MESSAGE, tagName.getText().toString());
         startActivity(intent);
 
         try {
