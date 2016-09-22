@@ -12,6 +12,7 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -20,40 +21,39 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 public class NewTagActivity extends AppCompatActivity {
-    NfcAdapter adapter;
-    PendingIntent pendingIntent;
-    IntentFilter writeTagFilters[];
-    Tag mytag;
-    Context ctx;
-    EditText tagName;
+    private Tag mytag;
+    private Context ctx;
+    private EditText tagName;
+    private NfcAdapter mAdapter;
+    private PendingIntent mPendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_tag);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         ctx = this;
         tagName = (EditText) findViewById(R.id.name);
-        adapter = NfcAdapter.getDefaultAdapter(this);
-        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
-        tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
-        writeTagFilters = new IntentFilter[] { tagDetected };
+        mAdapter = NfcAdapter.getDefaultAdapter(this);
+        mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        
     }
 
     public void writeTag(View view){
         try {
             if(mytag==null){
-                Toast.makeText(ctx, ctx.getString(R.string.error_detected), Toast.LENGTH_LONG ).show();
+                Toast.makeText(ctx, ctx.getString(R.string.error_detected), Toast.LENGTH_SHORT ).show();
             }else{
                 write(tagName.getText().toString(),mytag);
-                Toast.makeText(ctx, ctx.getString(R.string.ok_writing), Toast.LENGTH_LONG ).show();
+                Toast.makeText(ctx, ctx.getString(R.string.ok_writing), Toast.LENGTH_SHORT ).show();
             }
         } catch (IOException e) {
-            Toast.makeText(ctx, ctx.getString(R.string.error_writing), Toast.LENGTH_LONG ).show();
+            Toast.makeText(ctx, ctx.getString(R.string.error_writing), Toast.LENGTH_SHORT ).show();
             e.printStackTrace();
         } catch (FormatException e) {
-            Toast.makeText(ctx, ctx.getString(R.string.error_writing) , Toast.LENGTH_LONG ).show();
+            Toast.makeText(ctx, ctx.getString(R.string.error_writing) , Toast.LENGTH_SHORT ).show();
             e.printStackTrace();
         }
     }
