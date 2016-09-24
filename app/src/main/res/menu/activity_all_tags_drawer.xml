@@ -6,16 +6,17 @@
         <item
             android:id="@+id/alltags"
             android:icon="@drawable/ic_menu_tag"
-            android:title="All Tags" />
+            android:title="@string/all_tags"
+            android:checked="true"/>
     </group>
 
-    <item android:title="Checklisten">
+    <item android:title="@string/checklisten">
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:id="@+id/checkliste1"
+                    android:id="@+id/checklist"
                     android:icon="@drawable/ic_menu_checklist"
-                    android:title="Checklist" />
+                    android:title="@string/checklist" />
             </group>
         </menu>
     </item>
