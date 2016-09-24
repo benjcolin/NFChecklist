@@ -71,6 +71,16 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getAllTagsFromChecklist(int checklistId){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + TAG_TABLE_NAME +
+                                    " JOIN " + ASIGNEDTAG_TABLE_NAME + " ON " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID +
+                                    " JOIN " + CHECKLIST_TABLE_NAME + " ON " + CHECKLIST_TABLE_NAME + "." + CHECKLIST_COLUMN_ID + " = " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKLIST_IDFS +
+                                    " WHERE " + ASIGNEDTAG_COLUMN_CHECKED + " = " + "1"
+                                    , null);
+        return res;
+    }
+
     public Integer deleteTag(Integer id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TAG_TABLE_NAME,

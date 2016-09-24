@@ -1,12 +1,17 @@
 package com.nfchecklist.app;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 
 /**
@@ -28,6 +33,10 @@ public class ChecklistFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private ListView listView;
+    private DBHelper dbHelper;
+    private SimpleCursorAdapter cursorAdapter;
 
     public ChecklistFragment() {
         // Required empty public constructor
@@ -65,6 +74,46 @@ public class ChecklistFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_checklist, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        dbHelper = new DBHelper(getActivity());
+
+        final Cursor cursor = dbHelper.getAllTags();
+        String[] columns = new String[]{
+                DBHelper.TAG_COLUMN_NAME,
+                DBHelper.TAG_COLUMN_ID
+        };
+        int[] widgets = new int[]{
+                R.id.tagName,
+                R.id.tagId
+        };
+
+        cursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.tag,
+                cursor, columns, widgets, 0);
+        listView = (ListView) getView().findViewById(R.id.listViewChecklist);
+        listView.setAdapter(cursorAdapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Cursor itemCursor = (Cursor) ChecklistFragment.this.listView.getItemAtPosition(position);
+                dbHelper.deleteTag(itemCursor.getInt(itemCursor.getColumnIndex(DBHelper.TAG_COLUMN_ID)));
+                final Cursor cursor = dbHelper.getAllTagsFromChecklist(1);
+                cursorAdapter.changeCursor(cursor);
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        final Cursor cursor = dbHelper.getAllTagsFromChecklist(1);
+        cursorAdapter.changeCursor(cursor);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

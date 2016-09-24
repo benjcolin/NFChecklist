@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -34,6 +35,10 @@ public class AllTagsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private ListView listView;
+    private DBHelper dbHelper;
+    private SimpleCursorAdapter cursorAdapter;
+
     public AllTagsFragment() {
         // Required empty public constructor
     }
@@ -63,33 +68,6 @@ public class AllTagsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-//        DBHelper dbHelper = new DBHelper(this);
-//
-//        final Cursor cursor = dbHelper.getAllTags();
-//        String[] columns = new String[]{
-//                DBHelper.TAG_COLUMN_NAME,
-//                DBHelper.TAG_COLUMN_ID
-//        };
-//        int[] widgets = new int[]{
-//                R.id.tagName,
-//                R.id.tagId
-//        };
-
-//        SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.tag,
-//                cursor, columns, widgets, 0);
-//        ListView listView = (ListView) findViewById(R.id.listView);
-//        listView.setAdapter(cursorAdapter);
-//        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                Cursor itemCursor = (Cursor) AllTagsActivity.this.listView.getItemAtPosition(position);
-//                dbHelper.deleteTag(itemCursor.getInt(itemCursor.getColumnIndex(DBHelper.TAG_COLUMN_ID)));
-//                final Cursor cursor = dbHelper.getAllTags();
-//                cursorAdapter.changeCursor(cursor);
-//                return true;
-//            }
-//        });
     }
 
     @Override
@@ -97,6 +75,46 @@ public class AllTagsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_all_tags, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        dbHelper = new DBHelper(getActivity());
+
+        final Cursor cursor = dbHelper.getAllTags();
+        String[] columns = new String[]{
+                DBHelper.TAG_COLUMN_NAME,
+                DBHelper.TAG_COLUMN_ID
+        };
+        int[] widgets = new int[]{
+                R.id.tagName,
+                R.id.tagId
+        };
+
+        cursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.tag,
+                cursor, columns, widgets, 0);
+        listView = (ListView) getView().findViewById(R.id.listViewAllTags);
+        listView.setAdapter(cursorAdapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Cursor itemCursor = (Cursor) AllTagsFragment.this.listView.getItemAtPosition(position);
+                dbHelper.deleteTag(itemCursor.getInt(itemCursor.getColumnIndex(DBHelper.TAG_COLUMN_ID)));
+                final Cursor cursor = dbHelper.getAllTags();
+                cursorAdapter.changeCursor(cursor);
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        final Cursor cursor = dbHelper.getAllTags();
+        cursorAdapter.changeCursor(cursor);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -35,6 +35,7 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
     private String[] activityTitles;
     private Handler mHandler;
     private Toolbar toolbar;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
         setContentView(R.layout.activity_all_tags);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        dbHelper = new DBHelper(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -148,9 +150,8 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NewTagActivity.REQUEST_NEW_TAG && resultCode == Activity.RESULT_OK) {
-            //dbHelper.insertTag(data.getStringExtra(NewTagActivity.TAG_NAME));
-            //final Cursor cursor = dbHelper.getAllTags();
-            //cursorAdapter.changeCursor(cursor);
+            dbHelper.insertTag(data.getStringExtra(NewTagActivity.TAG_NAME));
+            final Cursor cursor = dbHelper.getAllTags();
         }
     }
 
