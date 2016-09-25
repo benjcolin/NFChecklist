@@ -3,8 +3,13 @@ package com.nfchecklist.app;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
 
 /**
  * Created by Benjamin on 22.09.2016.
@@ -13,7 +18,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
     //Datenbank
     public static final String DATABASE_NAME = "NFChecklist.db";
-    private static final int DATABSE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     //Tabelle checklist
     public static final String CHECKLIST_TABLE_NAME = "checklist";
     public static final String CHECKLIST_COLUMN_ID = "_id";
@@ -30,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TAG_COLUMN_NAME = "name";
 
     public DBHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABSE_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -49,6 +54,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 ASIGNEDTAG_COLUMN_CHECKLIST_IDFS + " INTEGER NOT NULL, " +
                 ASIGNEDTAG_COLUMN_CHECKED + " BOOLEAN NOT NULL DEFAULT FALSE)"
         );
+        //db.execSQL("INSERT INTO TABLE " + CHECKLIST_TABLE_NAME + " (" + CHECKLIST_COLUMN_ID + ", " + CHECKLIST_COLUMN_NAME + ") VALUE ('1','checklist1')");
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CHECKLIST_COLUMN_ID, 1);
+        contentValues.put(CHECKLIST_COLUMN_NAME, "checklist1");
+        db.insert(CHECKLIST_TABLE_NAME, null, contentValues);
     }
 
     @Override
@@ -65,19 +75,37 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean addTagToChecklist(int tagId) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ASIGNEDTAG_COLUMN_TAG_IDFS, tagId);
+        contentValues.put(ASIGNEDTAG_COLUMN_CHECKLIST_IDFS, 1);
+        db.insert(ASIGNEDTAG_TABLE_NAME, null, contentValues);
+        return true;
+    }
+
     public Cursor getAllTags() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + TAG_TABLE_NAME, null);
         return res;
     }
 
-    public Cursor getAllTagsFromChecklist(int checklistId){
+    //TODO: Damit keine Tags doppelt eingefügt werden
+    public Cursor getAllTagsToAdd() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM " + TAG_TABLE_NAME +
+        Cursor res = db.rawQuery("SELECT * FROM " + TAG_TABLE_NAME, null);
+        return res;
+    }
+
+    public Cursor getAllTagsFromChecklist(int checklistId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Log.d("BAUM", "SELECT " + TAG_TABLE_NAME + "." + TAG_COLUMN_NAME + ", " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID + " FROM " + TAG_TABLE_NAME +
+                " JOIN " + ASIGNEDTAG_TABLE_NAME + " ON " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID +
+                " JOIN " + CHECKLIST_TABLE_NAME + " ON " + CHECKLIST_TABLE_NAME + "." + CHECKLIST_COLUMN_ID + " = " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKLIST_IDFS);
+        Cursor res = db.rawQuery("SELECT " + TAG_TABLE_NAME + "." + TAG_COLUMN_NAME + ", " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID + " FROM " + TAG_TABLE_NAME +
                                     " JOIN " + ASIGNEDTAG_TABLE_NAME + " ON " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID +
-                                    " JOIN " + CHECKLIST_TABLE_NAME + " ON " + CHECKLIST_TABLE_NAME + "." + CHECKLIST_COLUMN_ID + " = " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKLIST_IDFS +
-                                    " WHERE " + ASIGNEDTAG_COLUMN_CHECKED + " = " + "1"
-                                    , null);
+                                    " JOIN " + CHECKLIST_TABLE_NAME + " ON " + CHECKLIST_TABLE_NAME + "." + CHECKLIST_COLUMN_ID + " = " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKLIST_IDFS
+                            , null);
         return res;
     }
 
@@ -86,5 +114,55 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.delete(TAG_TABLE_NAME,
                 TAG_COLUMN_ID + " = ? ",
                 new String[]{Integer.toString(id)});
+    }
+
+    public ArrayList<Cursor> getData(String Query) {
+        //get writable database
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        String[] columns = new String[]{"mesage"};
+        //an array list of cursor to save two cursors one has results from the query
+        //other cursor stores error message if any errors are triggered
+        ArrayList<Cursor> alc = new ArrayList<Cursor>(2);
+        MatrixCursor Cursor2 = new MatrixCursor(columns);
+        alc.add(null);
+        alc.add(null);
+
+
+        try {
+            String maxQuery = Query;
+            //execute the query results will be save in Cursor c
+            Cursor c = sqlDB.rawQuery(maxQuery, null);
+
+
+            //add value to cursor2
+            Cursor2.addRow(new Object[]{"Success"});
+
+            alc.set(1, Cursor2);
+            if (null != c && c.getCount() > 0) {
+
+
+                alc.set(0, c);
+                c.moveToFirst();
+
+                return alc;
+            }
+            return alc;
+        } catch (SQLException sqlEx) {
+            Log.d("printing exception", sqlEx.getMessage());
+            //if any exceptions are triggered save the error message to cursor an return the arraylist
+            Cursor2.addRow(new Object[]{"" + sqlEx.getMessage()});
+            alc.set(1, Cursor2);
+            return alc;
+        } catch (Exception ex) {
+
+            Log.d("printing exception", ex.getMessage());
+
+            //if any exceptions are triggered save the error message to cursor an return the arraylist
+            Cursor2.addRow(new Object[]{"" + ex.getMessage()});
+            alc.set(1, Cursor2);
+            return alc;
+        }
+
+
     }
 }

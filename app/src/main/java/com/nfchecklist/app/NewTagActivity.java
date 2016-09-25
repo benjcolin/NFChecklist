@@ -11,7 +11,7 @@ import android.widget.EditText;
 public class NewTagActivity extends AppCompatActivity {
     public final static String TAG_NAME = "TAG_NAME";
     public final static int REQUEST_WRITE_TAG = 0;
-    public final static int REQUEST_NEW_TAG = 0;
+    public final static int REQUEST_NEW_TAG = 1;
     private EditText tagName;
 
     @Override

@@ -3,7 +3,7 @@
     package="com.nfchecklist.app">
 
     <uses-permission android:name="android.permission.NFC" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -23,13 +23,15 @@
         <activity
             android:name=".NewTagActivity"
             android:label="@string/newTagActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
-        <activity android:name=".WriteTagActivity"
-            android:label="@string/write_tag">
-        </activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".WriteTagActivity"
+            android:label="@string/write_tag" />
+        <activity
+            android:name=".AddTagActivity"
+            android:label="Add Tag" />
+        <activity android:name="com.nfchecklist.app.AndroidDatabaseManager"
+            android:theme="@style/Theme.AppCompat.Light"/>
     </application>
 
 </manifest>

@@ -82,7 +82,7 @@ public class ChecklistFragment extends Fragment {
 
         dbHelper = new DBHelper(getActivity());
 
-        final Cursor cursor = dbHelper.getAllTags();
+        final Cursor cursor = dbHelper.getAllTagsFromChecklist(1);
         String[] columns = new String[]{
                 DBHelper.TAG_COLUMN_NAME,
                 DBHelper.TAG_COLUMN_ID

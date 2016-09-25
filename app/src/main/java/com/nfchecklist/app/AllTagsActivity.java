@@ -143,8 +143,16 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
     }
 
     public void newTag(View view) {
-        Intent intent = new Intent(this, NewTagActivity.class);
-        startActivityForResult(intent, NewTagActivity.REQUEST_NEW_TAG);
+        Intent intent;
+        switch (CURRENT_MENU){
+            case MENU_ALLTAGS:
+                intent = new Intent(this, NewTagActivity.class);
+                startActivityForResult(intent, NewTagActivity.REQUEST_NEW_TAG);
+                break;
+            case MENU_CHECKLIST:
+                intent = new Intent(this, AddTagActivity.class);
+                startActivityForResult(intent, AddTagActivity.REQUEST_ADD_TAG);
+        }
     }
 
     @Override
@@ -199,5 +207,10 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public void databaseManager(MenuItem menuItem){
+        Intent dbmanager = new Intent(this, AndroidDatabaseManager.class);
+        startActivity(dbmanager);
     }
 }
