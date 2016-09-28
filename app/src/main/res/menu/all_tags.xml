@@ -9,10 +9,11 @@
     <!--android:visible="false"-->
     <!--android:onClick="deleteTag"/>-->
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_clearAll"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/clearAll"
+        app:showAsAction="never"
+        android:onClick="clearAll"/>
 
     <item
         android:id="@+id/databasemanager"
