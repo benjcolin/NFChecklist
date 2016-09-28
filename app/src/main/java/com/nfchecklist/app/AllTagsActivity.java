@@ -3,6 +3,7 @@ package com.nfchecklist.app;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -301,8 +303,20 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
 
     public void clearAll(MenuItem menuItem) {
         dbHelper.clearAll();
-        checklistFragment.refreshList();
-
+        if(CURRENT_MENU == MENU_CHECKLIST){
+            checklistFragment.refreshList();
+        }else {
+            new AlertDialog.Builder(this)
+                    .setTitle("ACHTUNG!!!")
+                    .setMessage("JUHUUUUU!")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setIcon(R.drawable.ic_info_feedback)
+                    .show();
+        }
     }
     @Override
     public void onResume() {

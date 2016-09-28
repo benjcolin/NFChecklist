@@ -1,7 +1,9 @@
 package com.nfchecklist.app;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -25,9 +27,23 @@ public class NewTagActivity extends AppCompatActivity {
     }
 
     public void writeTag(View view){
-        Intent intent = new Intent(this, WriteTagActivity.class);
-        intent.putExtra(TAG_NAME, tagName.getText().toString());
-        startActivityForResult(intent, REQUEST_WRITE_TAG);
+        DBHelper dbHelper = new DBHelper(this);
+        if (dbHelper.checkName(tagName.getText().toString())){
+            Intent intent = new Intent(this, WriteTagActivity.class);
+            intent.putExtra(TAG_NAME, tagName.getText().toString());
+            startActivityForResult(intent, REQUEST_WRITE_TAG);
+        }else{
+            new AlertDialog.Builder(this)
+                    .setTitle("Dublicate entry")
+                    .setMessage("Please choose another name for your Tag.")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setIcon(R.drawable.ic_info_feedback)
+                    .show();
+        }
     }
 
     @Override

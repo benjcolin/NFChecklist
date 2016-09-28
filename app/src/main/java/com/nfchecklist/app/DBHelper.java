@@ -142,6 +142,18 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("UPDATE "+ASIGNEDTAG_TABLE_NAME+" SET "+ASIGNEDTAG_COLUMN_CHECKED+" = 'FALSE' ");
     }
 
+    public boolean checkName(String tagName){
+        SQLiteDatabase db = getWritableDatabase();
+        //Cursor c = db.rawQuery("SELECT * FROM " + TAG_TABLE_NAME + " JOIN " + ASIGNEDTAG_TABLE_NAME + " ON " + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID + " WHERE " + TAG_TABLE_NAME + "." + TAG_COLUMN_NAME + " = '" + tagName + "' AND " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKED + " = 'FALSE", null);
+        Cursor c = db.rawQuery("SELECT " + TAG_COLUMN_ID + " FROM " + TAG_TABLE_NAME + " WHERE " + TAG_COLUMN_NAME + " = '" + tagName + "'", null);
+        c.moveToFirst();
+        if (c.getCount() != 0) {
+            return false;
+        }else {
+            return true;
+        }
+    }
+
     public ArrayList<Cursor> getData(String Query) {
         //get writable database
         SQLiteDatabase sqlDB = this.getWritableDatabase();
