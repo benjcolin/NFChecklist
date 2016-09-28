@@ -1,9 +1,12 @@
 package com.nfchecklist.app;
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -36,6 +39,8 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
     private Handler mHandler;
     private Toolbar toolbar;
     private DBHelper dbHelper;
+    private NfcAdapter mAdapter;
+    private PendingIntent mPendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,9 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
             CURRENT_MENU = MENU_ALLTAGS;
             loadHomeFragment();
         }
+
+        mAdapter = NfcAdapter.getDefaultAdapter(this);
+        mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
     }
 
     private void loadHomeFragment() {
@@ -183,7 +191,7 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if (navItemIndex == 0) {
+        if (navItemIndex == 1) {
             getMenuInflater().inflate(R.menu.all_tags, menu);
         }
         return true;

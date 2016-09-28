@@ -1,10 +1,13 @@
 package com.nfchecklist.app;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
@@ -41,6 +44,9 @@ public class ChecklistFragment extends Fragment {
     private ListView listView;
     private DBHelper dbHelper;
     private SimpleCursorAdapter cursorAdapter;
+    private NfcAdapter mAdapter;
+    private PendingIntent mPendingIntent;
+    private Context ctx;
 
     public ChecklistFragment() {
         // Required empty public constructor
@@ -174,4 +180,5 @@ public class ChecklistFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }
