@@ -34,6 +34,7 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import com.nfchecklist.app.ChecklistFragment;
 
 import java.io.IOException;
@@ -231,7 +232,6 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
     }
 
 
-
     @Override
     public void onFragmentInteraction(Uri uri) {
 
@@ -254,12 +254,12 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
                 Ndef ndef = Ndef.get(mytag);
                 NdefMessage ndefMessage = ndef.getCachedNdefMessage();
                 NdefRecord[] records = ndefMessage.getRecords();
-                for(NdefRecord r : records){
-                    if(r.getTnf() == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(r.getType(), NdefRecord.RTD_TEXT)){
+                for (NdefRecord r : records) {
+                    if (r.getTnf() == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(r.getType(), NdefRecord.RTD_TEXT)) {
                         try {
                             String text = readText(r);
                             //Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-                            if(dbHelper.setTagChecked(text)) {
+                            if (dbHelper.setTagChecked(text)) {
                                 vib.vibrate(WriteTagActivity.VIBRATE_LENGHT);
                             }
                         } catch (UnsupportedEncodingException e) {
@@ -269,11 +269,10 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
                 }
                 //Toast.makeText(ctx, ctx.getString(R.string.ok_writing), Toast.LENGTH_SHORT ).show();
             }
-        }else {
+        } else {
             super.onNewIntent(intent);
         }
     }
-
 
 
     private String readText(NdefRecord record) throws UnsupportedEncodingException {
@@ -304,21 +303,9 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
 
     public void clearAll(MenuItem menuItem) {
         dbHelper.clearAll();
-        if(CURRENT_MENU == MENU_CHECKLIST){
-            checklistFragment.refreshList();
-        }else {
-            new AlertDialog.Builder(this)
-                    .setTitle("ACHTUNG!!!")
-                    .setMessage("JUHUUUUU!")
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .setIcon(R.drawable.ic_info_feedback)
-                    .show();
-        }
+        checklistFragment.refreshList();
     }
+
     @Override
     public void onResume() {
         super.onResume();

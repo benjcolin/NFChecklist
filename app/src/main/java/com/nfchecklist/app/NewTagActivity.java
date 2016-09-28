@@ -26,16 +26,30 @@ public class NewTagActivity extends AppCompatActivity {
         tagName = (EditText) findViewById(R.id.name);
     }
 
-    public void writeTag(View view) {
+    public void writeTag(View view){
+        String tagNameStr = tagName.getText().toString();
         DBHelper dbHelper = new DBHelper(this);
-        Intent intent = new Intent(this, WriteTagActivity.class);
-        intent.putExtra(TAG_NAME, tagName.getText().toString());
-        startActivityForResult(intent, REQUEST_WRITE_TAG);
+        if (dbHelper.checkName(tagNameStr) && !tagNameStr.isEmpty()){
+            Intent intent = new Intent(this, WriteTagActivity.class);
+            intent.putExtra(TAG_NAME, tagName.getText().toString());
+            startActivityForResult(intent, REQUEST_WRITE_TAG);
+        }else if (!tagNameStr.isEmpty()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Dublicate entry")
+                    .setMessage("Please choose another name for your Tag.")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setIcon(R.drawable.ic_info_feedback)
+                    .show();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_WRITE_TAG && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_WRITE_TAG && resultCode == Activity.RESULT_OK){
             setResult(Activity.RESULT_OK, new Intent().putExtra(TAG_NAME, tagName.getText().toString()));
             this.finish();
         }
