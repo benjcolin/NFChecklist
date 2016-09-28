@@ -14,6 +14,7 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -53,6 +54,7 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
     private NfcAdapter mAdapter;
     private PendingIntent mPendingIntent;
     private ChecklistFragment checklistFragment = new ChecklistFragment();
+    private Vibrator vib;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,8 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         dbHelper = new DBHelper(this);
+
+        vib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -253,6 +257,7 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
                         try {
                             String text = readText(r);
                             //Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+                            vib.vibrate(WriteTagActivity.VIBRATE_LENGHT);
                             dbHelper.setTagChecked(text);
                         } catch (UnsupportedEncodingException e) {
                             Log.e("NFCHECKLIST", "Unsupported Encoding", e);

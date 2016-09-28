@@ -20,5 +20,6 @@
         android:icon="@drawable/ic_menu_checklist"
         android:title="@string/databasemanager"
         app:showAsAction="ifRoom"
-        android:onClick="databaseManager"/>
+        android:onClick="databaseManager"
+        android:visible="false"/>
 </menu>
