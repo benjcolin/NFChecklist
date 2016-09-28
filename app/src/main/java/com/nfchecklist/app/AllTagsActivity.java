@@ -259,8 +259,9 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
                         try {
                             String text = readText(r);
                             //Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-                            vib.vibrate(WriteTagActivity.VIBRATE_LENGHT);
-                            dbHelper.setTagChecked(text);
+                            if(dbHelper.setTagChecked(text)) {
+                                vib.vibrate(WriteTagActivity.VIBRATE_LENGHT);
+                            }
                         } catch (UnsupportedEncodingException e) {
                             Log.e("NFCHECKLIST", "Unsupported Encoding", e);
                         }

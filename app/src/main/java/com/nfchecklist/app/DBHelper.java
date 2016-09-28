@@ -7,6 +7,7 @@ import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Vibrator;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TAG_TABLE_NAME = "tag";
     public static final String TAG_COLUMN_ID = "_id";
     public static final String TAG_COLUMN_NAME = "name";
+
+    private Vibrator vib;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -125,15 +128,39 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[]{Integer.toString(id)});
     }
 
-    public void setTagChecked(String tagName) {
+    public boolean setTagChecked(String tagName) {
         SQLiteDatabase db = getWritableDatabase();
         Log.d("NFCHECKLIST", "SELECT " + TAG_COLUMN_ID + " FROM " + TAG_TABLE_NAME + " WHERE " + TAG_COLUMN_NAME + " = '" + tagName + "'");
         Cursor c = db.rawQuery("SELECT " + TAG_COLUMN_ID + " FROM " + TAG_TABLE_NAME + " WHERE " + TAG_COLUMN_NAME + " = '" + tagName + "'", null);
         c.moveToFirst();
         if (c.getCount() != 0) {
+
             String tagId = c.getString(c.getColumnIndex(TAG_COLUMN_ID));
-            db.execSQL("UPDATE " + ASIGNEDTAG_TABLE_NAME + " SET " + ASIGNEDTAG_COLUMN_CHECKED + "='TRUE' WHERE " + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + tagId);
-            Log.d("NFCHECKLIST", "UPDATE " + ASIGNEDTAG_TABLE_NAME + " SET " + ASIGNEDTAG_COLUMN_CHECKED + "='TRUE' WHERE " + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + tagId);
+            if(!isChecked(tagId)){
+                db.execSQL("UPDATE " + ASIGNEDTAG_TABLE_NAME + " SET " + ASIGNEDTAG_COLUMN_CHECKED + "='TRUE' WHERE " + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + tagId);
+                Log.d("NFCHECKLIST", "UPDATE " + ASIGNEDTAG_TABLE_NAME + " SET " + ASIGNEDTAG_COLUMN_CHECKED + "='TRUE' WHERE " + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + tagId);
+                return true;
+            }else{
+                return false;
+            }
+
+
+        }else{
+            return false;
+        }
+
+
+    }
+
+    public boolean isChecked(String tagId){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT " + ASIGNEDTAG_COLUMN_CHECKED + " FROM " + ASIGNEDTAG_TABLE_NAME + " WHERE " + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + tagId + " AND " + ASIGNEDTAG_COLUMN_CHECKED + " = 'TRUE'",null);
+        c.moveToFirst();
+
+        if(c.getCount() != 0){
+            return true;
+        }else{
+            return false;
         }
     }
 
