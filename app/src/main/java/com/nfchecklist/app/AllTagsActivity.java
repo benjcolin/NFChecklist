@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+import com.nfchecklist.app.ChecklistFragment;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -51,6 +52,7 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
     private DBHelper dbHelper;
     private NfcAdapter mAdapter;
     private PendingIntent mPendingIntent;
+    private ChecklistFragment checklistFragment = new ChecklistFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +147,7 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
                 AllTagsFragment allTagsFragment = new AllTagsFragment();
                 return allTagsFragment;
             case 1:
-                ChecklistFragment checklistFragment = new ChecklistFragment();
+                checklistFragment = new ChecklistFragment();
                 return checklistFragment;
             default:
                 return new AllTagsFragment();
@@ -234,10 +236,6 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
         startActivity(dbmanager);
     }
 
-
-    public void clearAll(MenuItem menuItem) {
-        dbHelper.clearAll();
-    }
     @Override
     protected void onNewIntent(Intent intent) {
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()) && CURRENT_MENU == MENU_CHECKLIST) {
@@ -296,6 +294,11 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
         return new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
     }
 
+    public void clearAll(MenuItem menuItem) {
+        dbHelper.clearAll();
+        checklistFragment.refreshList();
+
+    }
     @Override
     public void onResume() {
         super.onResume();
