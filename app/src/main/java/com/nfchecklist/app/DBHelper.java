@@ -93,7 +93,7 @@ public class DBHelper extends SQLiteOpenHelper {
     //TODO: Damit keine Tags doppelt eingefügt werden
     public Cursor getAllTagsToAdd() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM " + TAG_TABLE_NAME + " WHERE "+TAG_COLUMN_ID+" NOT IN (SELECT "+ASIGNEDTAG_COLUMN_TAG_IDFS+" FROM "+ASIGNEDTAG_TABLE_NAME+" )", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + TAG_TABLE_NAME + " WHERE " + TAG_COLUMN_ID + " NOT IN (SELECT " + ASIGNEDTAG_COLUMN_TAG_IDFS + " FROM " + ASIGNEDTAG_TABLE_NAME + " )", null);
         return res;
     }
 
@@ -105,7 +105,8 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("SELECT " + TAG_TABLE_NAME + "." + TAG_COLUMN_NAME + ", " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID + ", " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKED + " FROM " + TAG_TABLE_NAME +
                         " JOIN " + ASIGNEDTAG_TABLE_NAME + " ON " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID +
                         " JOIN " + CHECKLIST_TABLE_NAME + " ON " + CHECKLIST_TABLE_NAME + "." + CHECKLIST_COLUMN_ID + " = " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKLIST_IDFS
-                            , null);
+                        + " ORDER BY " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKED + " ASC"
+                , null);
         return res;
     }
 
@@ -116,11 +117,23 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[]{Integer.toString(id)});
     }
 
-    public Integer deleteTagFromChecklist(Integer id){
+    public Integer deleteTagFromChecklist(Integer id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(ASIGNEDTAG_TABLE_NAME,
                 ASIGNEDTAG_COLUMN_TAG_IDFS + " = ? ",
                 new String[]{Integer.toString(id)});
+    }
+
+    public void setTagChecked(String tagName) {
+        SQLiteDatabase db = getWritableDatabase();
+        Log.d("NFCHECKLIST", "SELECT " + TAG_COLUMN_ID + " FROM " + TAG_TABLE_NAME + " WHERE " + TAG_COLUMN_NAME + " = '" + tagName + "'");
+        Cursor c = db.rawQuery("SELECT " + TAG_COLUMN_ID + " FROM " + TAG_TABLE_NAME + " WHERE " + TAG_COLUMN_NAME + " = '" + tagName + "'", null);
+        c.moveToFirst();
+        if (c.getCount() != 0) {
+            String tagId = c.getString(c.getColumnIndex(TAG_COLUMN_ID));
+            db.execSQL("UPDATE " + ASIGNEDTAG_TABLE_NAME + " SET " + ASIGNEDTAG_COLUMN_CHECKED + "='TRUE' WHERE " + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + tagId);
+            Log.d("NFCHECKLIST", "UPDATE " + ASIGNEDTAG_TABLE_NAME + " SET " + ASIGNEDTAG_COLUMN_CHECKED + "='TRUE' WHERE " + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + tagId);
+        }
     }
 
     public ArrayList<Cursor> getData(String Query) {

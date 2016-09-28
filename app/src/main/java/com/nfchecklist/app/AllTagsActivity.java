@@ -240,7 +240,6 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
             if (mytag == null) {
                 //Toast.makeText(ctx, ctx.getString(R.string.error_detected), Toast.LENGTH_SHORT ).show();
             } else {
-                //TODO: Tag auslesen
                 //Toast.makeText(this, mytag.toString(), Toast.LENGTH_SHORT).show();
                 Ndef ndef = Ndef.get(mytag);
                 NdefMessage ndefMessage = ndef.getCachedNdefMessage();
@@ -249,7 +248,8 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
                     if(r.getTnf() == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(r.getType(), NdefRecord.RTD_TEXT)){
                         try {
                             String text = readText(r);
-                            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+                            dbHelper.setTagChecked(text);
                         } catch (UnsupportedEncodingException e) {
                             Log.e("NFCHECKLIST", "Unsupported Encoding", e);
                         }
