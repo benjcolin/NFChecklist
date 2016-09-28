@@ -6,13 +6,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.nfc.FormatException;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,6 +31,10 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 public class AllTagsActivity extends AppCompatActivity implements AllTagsFragment.OnFragmentInteractionListener, ChecklistFragment.OnFragmentInteractionListener {
 
@@ -152,7 +162,7 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
 
     public void newTag(View view) {
         Intent intent;
-        switch (CURRENT_MENU){
+        switch (CURRENT_MENU) {
             case MENU_ALLTAGS:
                 intent = new Intent(this, NewTagActivity.class);
                 startActivityForResult(intent, NewTagActivity.REQUEST_NEW_TAG);
@@ -219,12 +229,82 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
 
     }
 
-    public void databaseManager(MenuItem menuItem){
+    public void databaseManager(MenuItem menuItem) {
         Intent dbmanager = new Intent(this, AndroidDatabaseManager.class);
         startActivity(dbmanager);
     }
 
-    public void clearAll(MenuItem menuItem){
+
+    public void clearAll(MenuItem menuItem) {
         dbHelper.clearAll();
+    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()) && CURRENT_MENU == MENU_CHECKLIST) {
+            Tag mytag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            //Toast.makeText(this, this.getString(R.string.ok_detection) + mytag.toString(), Toast.LENGTH_LONG ).show();
+            if (mytag == null) {
+                //Toast.makeText(ctx, ctx.getString(R.string.error_detected), Toast.LENGTH_SHORT ).show();
+            } else {
+                //TODO: Tag auslesen
+                //Toast.makeText(this, mytag.toString(), Toast.LENGTH_SHORT).show();
+                Ndef ndef = Ndef.get(mytag);
+                NdefMessage ndefMessage = ndef.getCachedNdefMessage();
+                NdefRecord[] records = ndefMessage.getRecords();
+                for(NdefRecord r : records){
+                    if(r.getTnf() == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(r.getType(), NdefRecord.RTD_TEXT)){
+                        try {
+                            String text = readText(r);
+                            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+                        } catch (UnsupportedEncodingException e) {
+                            Log.e("NFCHECKLIST", "Unsupported Encoding", e);
+                        }
+                    }
+                }
+                //Toast.makeText(ctx, ctx.getString(R.string.ok_writing), Toast.LENGTH_SHORT ).show();
+            }
+        }else {
+            super.onNewIntent(intent);
+        }
+    }
+
+
+
+    private String readText(NdefRecord record) throws UnsupportedEncodingException {
+        /*
+         * See NFC forum specification for "Text Record Type Definition" at 3.2.1
+         *
+         * http://www.nfc-forum.org/specs/
+         *
+         * bit_7 defines encoding
+         * bit_6 reserved for future use, must be 0
+         * bit_5..0 length of IANA language code
+         */
+
+        byte[] payload = record.getPayload();
+
+        // Get the Text Encoding
+        String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16";
+
+        // Get the Language Code
+        int languageCodeLength = payload[0] & 0063;
+
+        // String languageCode = new String(payload, 1, languageCodeLength, "US-ASCII");
+        // e.g. "en"
+
+        // Get the Text
+        return new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter.enableForegroundDispatch(this, mPendingIntent, null, null); //ended up setting mFilters and mTechLists to null
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mAdapter.disableForegroundDispatch(this);
     }
 }
