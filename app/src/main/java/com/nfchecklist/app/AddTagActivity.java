@@ -21,7 +21,7 @@ public class AddTagActivity extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
 
-        final Cursor cursor = dbHelper.getAllTags();
+        final Cursor cursor = dbHelper.getAllTagsToAdd();
         String[] columns = new String[]{
                 DBHelper.TAG_COLUMN_NAME,
                 DBHelper.TAG_COLUMN_ID

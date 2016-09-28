@@ -93,7 +93,7 @@ public class DBHelper extends SQLiteOpenHelper {
     //TODO: Damit keine Tags doppelt eingefügt werden
     public Cursor getAllTagsToAdd() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM " + TAG_TABLE_NAME, null);
+        Cursor res = db.rawQuery("SELECT * FROM " + TAG_TABLE_NAME + " WHERE "+TAG_COLUMN_ID+" NOT IN (SELECT "+ASIGNEDTAG_COLUMN_TAG_IDFS+" FROM "+ASIGNEDTAG_TABLE_NAME+" )", null);
         return res;
     }
 
@@ -113,6 +113,13 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TAG_TABLE_NAME,
                 TAG_COLUMN_ID + " = ? ",
+                new String[]{Integer.toString(id)});
+    }
+
+    public Integer deleteTagFromChecklist(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(ASIGNEDTAG_TABLE_NAME,
+                ASIGNEDTAG_COLUMN_TAG_IDFS + " = ? ",
                 new String[]{Integer.toString(id)});
     }
 

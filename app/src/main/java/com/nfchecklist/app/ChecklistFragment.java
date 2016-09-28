@@ -100,7 +100,7 @@ public class ChecklistFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Cursor itemCursor = (Cursor) ChecklistFragment.this.listView.getItemAtPosition(position);
-                dbHelper.deleteTag(itemCursor.getInt(itemCursor.getColumnIndex(DBHelper.TAG_COLUMN_ID)));
+                dbHelper.deleteTagFromChecklist(itemCursor.getInt(itemCursor.getColumnIndex(DBHelper.ASIGNEDTAG_COLUMN_ID)));
                 final Cursor cursor = dbHelper.getAllTagsFromChecklist(1);
                 cursorAdapter.changeCursor(cursor);
                 return true;
