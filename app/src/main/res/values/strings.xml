@@ -20,6 +20,7 @@
     <string name="checklist">Checklist</string>
     <string name="checklisten">Checklisten</string>
     <string name="all_tags">All Tags</string>
+    <string name="clearAll">Clear All</string>
 
     <string-array name="nav_item_acitivity_titles">
         <item>All Tags</item>

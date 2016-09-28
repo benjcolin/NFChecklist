@@ -111,6 +111,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Integer deleteTag(Integer id) {
         SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(ASIGNEDTAG_TABLE_NAME,ASIGNEDTAG_COLUMN_TAG_IDFS + "= ? ", new String[]{Integer.toString(id)});
         return db.delete(TAG_TABLE_NAME,
                 TAG_COLUMN_ID + " = ? ",
                 new String[]{Integer.toString(id)});
@@ -121,6 +122,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.delete(ASIGNEDTAG_TABLE_NAME,
                 ASIGNEDTAG_COLUMN_TAG_IDFS + " = ? ",
                 new String[]{Integer.toString(id)});
+    }
+
+    public void clearAll(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE "+ASIGNEDTAG_TABLE_NAME+" SET "+ASIGNEDTAG_COLUMN_CHECKED+" = 'FALSE' ");
     }
 
     public ArrayList<Cursor> getData(String Query) {
@@ -169,6 +175,7 @@ public class DBHelper extends SQLiteOpenHelper {
             alc.set(1, Cursor2);
             return alc;
         }
+
 
 
     }

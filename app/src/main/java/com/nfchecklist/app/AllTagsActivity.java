@@ -205,12 +205,14 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_clearAll) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -220,5 +222,9 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
     public void databaseManager(MenuItem menuItem){
         Intent dbmanager = new Intent(this, AndroidDatabaseManager.class);
         startActivity(dbmanager);
+    }
+
+    public void clearAll(MenuItem menuItem){
+        dbHelper.clearAll();
     }
 }
