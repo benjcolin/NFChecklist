@@ -89,8 +89,7 @@ public class AllTagsFragment extends Fragment {
                 DBHelper.TAG_COLUMN_ID
         };
         int[] widgets = new int[]{
-                R.id.tagName,
-                R.id.tagId
+                R.id.tagName
         };
 
         cursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.tag,

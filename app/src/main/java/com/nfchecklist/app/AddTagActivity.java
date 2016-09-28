@@ -27,8 +27,7 @@ public class AddTagActivity extends AppCompatActivity {
                 DBHelper.TAG_COLUMN_ID
         };
         int[] widgets = new int[]{
-                R.id.tagName,
-                R.id.tagId
+                R.id.tagName
         };
 
         cursorAdapter = new SimpleCursorAdapter(this, R.layout.tag,

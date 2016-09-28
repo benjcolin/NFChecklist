@@ -99,12 +99,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getAllTagsFromChecklist(int checklistId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Log.d("BAUM", "SELECT " + TAG_TABLE_NAME + "." + TAG_COLUMN_NAME + ", " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID + " FROM " + TAG_TABLE_NAME +
+        Log.d("NFCHECKLIST", "SELECT " + TAG_TABLE_NAME + "." + TAG_COLUMN_NAME + ", " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID + ", " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKED + " FROM " + TAG_TABLE_NAME +
                 " JOIN " + ASIGNEDTAG_TABLE_NAME + " ON " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID +
                 " JOIN " + CHECKLIST_TABLE_NAME + " ON " + CHECKLIST_TABLE_NAME + "." + CHECKLIST_COLUMN_ID + " = " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKLIST_IDFS);
-        Cursor res = db.rawQuery("SELECT " + TAG_TABLE_NAME + "." + TAG_COLUMN_NAME + ", " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID + " FROM " + TAG_TABLE_NAME +
-                                    " JOIN " + ASIGNEDTAG_TABLE_NAME + " ON " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID +
-                                    " JOIN " + CHECKLIST_TABLE_NAME + " ON " + CHECKLIST_TABLE_NAME + "." + CHECKLIST_COLUMN_ID + " = " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKLIST_IDFS
+        Cursor res = db.rawQuery("SELECT " + TAG_TABLE_NAME + "." + TAG_COLUMN_NAME + ", " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID + ", " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKED + " FROM " + TAG_TABLE_NAME +
+                        " JOIN " + ASIGNEDTAG_TABLE_NAME + " ON " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_TAG_IDFS + " = " + TAG_TABLE_NAME + "." + TAG_COLUMN_ID +
+                        " JOIN " + CHECKLIST_TABLE_NAME + " ON " + CHECKLIST_TABLE_NAME + "." + CHECKLIST_COLUMN_ID + " = " + ASIGNEDTAG_TABLE_NAME + "." + ASIGNEDTAG_COLUMN_CHECKLIST_IDFS
                             , null);
         return res;
     }

@@ -2,8 +2,11 @@ package com.nfchecklist.app;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 
 /**
@@ -85,15 +89,31 @@ public class ChecklistFragment extends Fragment {
         final Cursor cursor = dbHelper.getAllTagsFromChecklist(1);
         String[] columns = new String[]{
                 DBHelper.TAG_COLUMN_NAME,
-                DBHelper.TAG_COLUMN_ID
+                DBHelper.TAG_COLUMN_ID,
+                DBHelper.ASIGNEDTAG_COLUMN_CHECKED
         };
         int[] widgets = new int[]{
-                R.id.tagName,
-                R.id.tagId
+                R.id.tagName
         };
 
         cursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.tag,
                 cursor, columns, widgets, 0);
+        cursorAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+                if (view.getId() == R.id.tagName){
+                    int getIndex = cursor.getColumnIndex(DBHelper.ASIGNEDTAG_COLUMN_CHECKED);
+                    String checked = cursor.getString(getIndex);
+                    TextView tv = (TextView) view;
+                    if (checked.equals("FALSE")){
+                        tv.setBackgroundColor(Color.rgb(239, 83, 80));
+                    }else {
+                        tv.setBackgroundColor(Color.rgb(102, 187, 106));
+                    }
+                }
+                return false;
+            }
+        });
         listView = (ListView) getView().findViewById(R.id.listViewChecklist);
         listView.setAdapter(cursorAdapter);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
