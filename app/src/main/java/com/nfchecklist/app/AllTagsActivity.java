@@ -128,6 +128,8 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
                         navItemIndex = 1;
                         CURRENT_MENU = MENU_CHECKLIST;
                         break;
+                    case R.id.newChecklist:
+                        newChecklist();
                     default:
                         navItemIndex = 0;
                 }
@@ -146,6 +148,11 @@ public class AllTagsActivity extends AppCompatActivity implements AllTagsFragmen
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+    }
+
+    private void newChecklist() {
+        Intent intent = new Intent(this, NewChecklistActivity.class);
+        startActivity(intent);
     }
 
     private Fragment getHomeFragment() {

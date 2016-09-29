@@ -17,6 +17,10 @@
                     android:id="@+id/checklist"
                     android:icon="@drawable/ic_menu_checklist"
                     android:title="@string/checklist" />
+                <item
+                    android:id="@+id/newChecklist"
+                    android:icon="@drawable/ic_menu_newchecklist"
+                    android:title="@string/newChecklist"/>
             </group>
         </menu>
     </item>
